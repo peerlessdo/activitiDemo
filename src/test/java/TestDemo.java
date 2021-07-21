@@ -1,5 +1,7 @@
 import org.activiti.engine.*;
 import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.junit.Test;
@@ -127,5 +129,30 @@ public class TestDemo {
                 .taskAssignee("rose")
                 .singleResult();
         taskService.complete(task.getId());
+    }
+
+    /**
+     * 查询流程定义
+     */
+    @Test
+    public void queryProcessDefinition() {
+        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+
+        RepositoryService repositoryService = processEngine.getRepositoryService();
+
+        ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery();
+
+        List<ProcessDefinition> definitionList = processDefinitionQuery.processDefinitionKey("myEvection")
+                .orderByProcessDefinitionVersion()
+                .desc()
+                .list();
+
+        for (ProcessDefinition processDefinition : definitionList) {
+            System.out.println("流程定义ID：" + processDefinition.getId());
+            System.out.println("流程定义名称：" + processDefinition.getName());
+            System.out.println("流程定义Key：" + processDefinition.getKey());
+            System.out.println("流程定义版本：" + processDefinition.getVersion());
+            System.out.println("流程部署ID：" + processDefinition.getDeploymentId());
+        }
     }
 }
